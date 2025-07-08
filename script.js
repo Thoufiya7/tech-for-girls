@@ -28,15 +28,34 @@ whatsappBtn.addEventListener("click", () => {
   }
 });
 
-form.addEventListener("submit", () => {
-  localStorage.setItem("formSubmitted", "true");
-  disableForm();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const fileInput = document.getElementById("fileUpload");
+  const file = fileInput.files[0];
+
+  // Optional: Upload to file.io or use Google Drive in real project
+  const fileURL = file ? file.name : "No file";
+
+  const formData = new FormData(form);
+  formData.append("file", fileURL);
+
+  const response = await fetch("https://script.google.com/macros/s/AKfycbx0SmFlHMirCGSSUskHvicF4_jD95Z_gzqGmxcZQSdK3IrG3bh8t-wRNVJLekhrACT8/exec", {
+    method: "POST",
+    body: formData,
+  });
+
+  if (response.ok) {
+    localStorage.setItem("formSubmitted", "true");
+    disableForm();
+    window.location.href = "thankyou.html";
+  } else {
+    alert("Submission failed!");
+  }
 });
 
 function disableForm() {
-  form.querySelectorAll("input, button").forEach(el => {
-    el.disabled = true;
-  });
-  shareComplete.textContent = "🎉 Your submission has been recorded. Thanks for being part of Tech for Girls!";
+  form.querySelectorAll("input, button").forEach(el => el.disabled = true);
+  shareComplete.textContent = "🎉 Your submission has been recorded!";
   shareComplete.style.display = "block";
 }

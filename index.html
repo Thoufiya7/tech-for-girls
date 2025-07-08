@@ -9,23 +9,18 @@
   <div class="container">
     <h1>🚀 Tech For Girls Registration</h1>
 
-    <form id="registrationForm" action="https://formsubmit.co/thoufiyabanu2004@gmail.com" method="POST" enctype="multipart/form-data">
-      
+    <form id="registrationForm">
       <input type="text" name="name" placeholder="Your Name" required>
       <input type="tel" name="phone" placeholder="Phone Number" required>
       <input type="email" name="email" placeholder="Email ID" required>
       <input type="text" name="college" placeholder="College/Department" required>
-      <input type="file" name="screenshot" required>
+      <input type="file" name="file" id="fileUpload" required>
 
       <div class="whatsapp-section">
         <button type="button" id="whatsappBtn">📤 Share on WhatsApp</button>
         <p id="counterText">Click Count: 0 / 5</p>
         <p id="shareComplete" style="display: none;">✅ Sharing complete. Please continue.</p>
       </div>
-
-      <!-- Hidden fields for FormSubmit -->
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="https://thoufiya8.github.io/tech-for-girls/thankyou.html">
 
       <button type="submit" id="submitBtn" disabled>Submit Registration</button>
     </form>

@@ -26,11 +26,7 @@ form {
   gap: 15px;
 }
 
-input[type="text"],
-input[type="email"],
-input[type="tel"],
-input[type="file"],
-button {
+input, button {
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -42,22 +38,9 @@ button {
   color: white;
   border: none;
   cursor: pointer;
-  transition: background 0.3s ease;
 }
 
 button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
-  background-color: #e60073;
-}
-
-.whatsapp-section {
-  text-align: center;
-}
-
-#counterText {
-  font-weight: bold;
 }
