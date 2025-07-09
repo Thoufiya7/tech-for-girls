@@ -1,61 +1,75 @@
-let count = localStorage.getItem("shareCount") || 0;
-let formSubmitted = localStorage.getItem("formSubmitted") === "true";
+let shareCount = 0;
+const maxShares = 5;
 
-const counterText = document.getElementById("counterText");
-const shareComplete = document.getElementById("shareComplete");
-const whatsappBtn = document.getElementById("whatsappBtn");
+const shareBtn = document.getElementById("whatsappShareBtn");
+const countText = document.getElementById("shareCount");
+const shareStatus = document.getElementById("shareStatus");
 const submitBtn = document.getElementById("submitBtn");
 const form = document.getElementById("registrationForm");
+const thankYouMsg = document.getElementById("thankYouMsg");
 
-counterText.textContent = `Click Count: ${count} / 5`;
-
-if (formSubmitted) {
-  disableForm();
+// Prevent resubmit
+if (localStorage.getItem("submitted")) {
+  form.style.display = "none";
+  thankYouMsg.classList.remove("hidden");
 }
 
-whatsappBtn.addEventListener("click", () => {
-  if (count < 5) {
+shareBtn.addEventListener("click", () => {
+  if (shareCount < maxShares) {
     const message = encodeURIComponent("Hey Buddy, Join Tech For Girls Community!");
-    window.open(`https://wa.me/?text=${message}`, "_blank");
-    count++;
-    localStorage.setItem("shareCount", count);
-    counterText.textContent = `Click Count: ${count} / 5`;
-  }
+    const link = `https://wa.me/?text=${message}`;
+    window.open(link, "_blank");
 
-  if (count >= 5) {
-    shareComplete.style.display = "block";
-    submitBtn.disabled = false;
+    shareCount++;
+    countText.textContent = `Click count: ${shareCount}/5`;
+
+    if (shareCount === maxShares) {
+      shareStatus.textContent = "Sharing complete. Please continue.";
+    }
   }
 });
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const fileInput = document.getElementById("fileUpload");
-  const file = fileInput.files[0];
+  if (shareCount < maxShares) {
+    alert("Please complete WhatsApp sharing (5/5) before submitting.");
+    return;
+  }
 
-  // Optional: Upload to file.io or use Google Drive in real project
-  const fileURL = file ? file.name : "No file";
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const email = document.getElementById("email").value;
+  const college = document.getElementById("college").value;
+  const file = document.getElementById("screenshot").files[0];
 
-  const formData = new FormData(form);
-  formData.append("file", fileURL);
+  if (!file) {
+    alert("Please upload a file.");
+    return;
+  }
 
-  const response = await fetch("https://script.google.com/macros/s/AKfycbx0SmFlHMirCGSSUskHvicF4_jD95Z_gzqGmxcZQSdK3IrG3bh8t-wRNVJLekhrACT8/exec", {
-    method: "POST",
-    body: formData,
-  });
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("phone", phone);
+  formData.append("email", email);
+  formData.append("college", college);
+  formData.append("screenshot", file);
 
-  if (response.ok) {
-    localStorage.setItem("formSubmitted", "true");
-    disableForm();
-    window.location.href = "thankyou.html";
-  } else {
-    alert("Submission failed!");
+  // Replace this URL with your Google Apps Script Web App URL
+  const scriptURL = "https://script.google.com/macros/s/AKfycbzVvIGrBhgWMAmuu7tMgJAAdah3cC6OYfebrxmEaWjcTr3obCrsTAA1R6ytEhgqrS1j/exec";
+
+  try {
+    await fetch(scriptURL, {
+      method: "POST",
+      body: formData
+    });
+
+    localStorage.setItem("submitted", "true");
+    form.style.display = "none";
+    thankYouMsg.classList.remove("hidden");
+
+  } catch (error) {
+    alert("Error submitting form. Try again.");
+    console.error("Submission error:", error);
   }
 });
-
-function disableForm() {
-  form.querySelectorAll("input, button").forEach(el => el.disabled = true);
-  shareComplete.textContent = "🎉 Your submission has been recorded!";
-  shareComplete.style.display = "block";
-}
